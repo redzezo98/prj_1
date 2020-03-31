@@ -1,0 +1,94 @@
+#include<iostream>
+#include<string>
+#include<vector>
+
+using namespace std;
+
+// mỗi 1 chuỗi phụ kẹp giữa 2 khoảng trắng(kt), độ dài chuỗi phụ = kt_sau - kt_truoc - 1, ví dụ:
+// abc def ghk: def = 7-3-1 = 3
+
+// Hàm tìm độ dài các chuỗi phụ và trả về giá trị độ dài lớn nhất
+int s_temp_max(string s, vector<int>& A) {
+	int temp_size_max=0; // độ dài chuỗi phụ  max
+	int temp_size=0; // độ dài chuỗi phụ
+	int flag = -1; // khoảng trắng đầu tiên
+	for (int i = 0; i < s.size(); i++) {
+		if (i == s.size() - 1) {
+			temp_size = i - flag;
+		}
+		// Tìm vị trí khoảng trắng
+		if (s[i] == ' ') {
+			//  lưu vào vector quản lí 
+			A.push_back(i);
+			// Nếu là khoảng trắng đầu tiên
+			if (flag == -1) {
+				temp_size_max = i;
+				flag = i; // cắm cờ
+				continue;
+			}
+			else { // không phải là khoảng trắng đầu tiên
+				temp_size = i - flag - 1; // flag = vị trí khoảng trắng trc đó
+				flag = i; // cắm cờ
+			}
+		}
+		// kiểm tra độ dài mới với độ dài max, nếu lớn hơn thì nó là max
+		if (temp_size > temp_size_max) {
+			temp_size_max = temp_size;
+		}
+	}
+	
+	return temp_size_max; // trả về giá trị độ dài lớn nhất
+}
+
+// Hàm xuất chuỗi phụ
+void xuat(string s, int kt1, int kt2,int max_size_temp) {
+	for (int i = kt1 + 1; i < kt2; i++) {
+		cout << s[i];
+		if (i == kt2 - 1) {
+			cout << "[" << max_size_temp << "]" << endl;
+		}
+	}
+	
+}
+
+// Hàm xuất ra chuỗi phụ dài nhất
+void temp_string_max(string s, vector<int> A) {
+	int max_temp_size = s_temp_max(s, A); // độ dài chuỗi lớn nhất
+	// chuỗi phụ đầu 
+	if (A[0] == max_temp_size) {
+		xuat(s, -1, A[0], max_temp_size);
+	}
+	//
+	for (int i = 1; i < A.size(); i++) {
+		int temp = A[i] - A[i - 1]-1;
+		if (temp == max_temp_size) {
+			xuat(s, A[i - 1], A[i], max_temp_size);
+		}
+	}
+
+	// chuỗi phụ cuối
+	if (s.size() - 1 - A.back() == max_temp_size) xuat(s, A.back(), s.size(), max_temp_size);
+	
+}
+
+int main()
+{
+	// Nhập chuỗi chính
+	fflush(stdin);
+	string s_main;
+	getline(cin, s_main);
+	
+	//cout << s_main.size();
+	
+	// Tạo vector lưu vị trí khoảng trắng
+	
+	vector<int> A;
+	
+	
+	// gọi hàm xuất ra chuỗi phụ có độ dài max
+	temp_string_max(s_main, A);
+
+
+	system("pause");
+	return 0;
+}
